@@ -1,0 +1,25 @@
+{
+  "name": "city-explorer-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BianQt/city-explorer-app.git"
+  },
+  "author": "Bayan Qutshan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BianQt/city-explorer-app/issues"
+  },
+  "homepage": "https://github.com/BianQt/city-explorer-app#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1"
+  }
+}
