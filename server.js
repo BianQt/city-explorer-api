@@ -2,7 +2,9 @@
 const express = require("express");
 const cors = require("cors");
 const data = require("./data/weather.json");
+require('dotenv').config({path: __dirname + '/.env'});
 
+const PORT = process.env.PORT;
 const app = express();
 app.use(cors());
 
@@ -34,9 +36,7 @@ app.get("/weather", (req, res) => {
   console.log(port);
 });
 
-const port = process.env.PORT;
-console.log("port",port);
 
-app.listen(3001, () => {
+app.listen(PORT, () => {
   console.log("Server running on port 3001.");
 });
