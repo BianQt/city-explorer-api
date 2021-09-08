@@ -9,6 +9,22 @@ const PORT = process.env.PORT;
 const app = express();
 app.use(cors());
 
+class Forcast {
+  constructor(date,max,min,desc, icon){
+    this.date = date;
+    this.max = max;
+    this.min=min;
+    this.desc =desc;
+    this.icon = icon;
+  }
+}
+class Movies {
+  constructor(tit,img){
+    this.tit = tit;
+    this.img = img;
+  }
+}
+
 app.get("/", (req, res) => {
   res.send("Hello");
 });
@@ -29,7 +45,8 @@ app.get("/weather", async (req, res) => {
     if (q) {
       const url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${q}&key=${key}`;
       const weatherData = await axios.get(url);
-      res.json(weatherData.data);
+      const refactoredData = weatherData.data.data.map((day)=>{ return new Forcast(day.datetime, day.high_temp,day.low_temp,day.weather.description,day.weather.icon)})
+      res.json(refactoredData);
       console.log(weatherData);
     } else {
       res.send("<h1>Error!</h1>");
@@ -49,8 +66,9 @@ const q = req.query.q;
     if (q) {
       const url = `https://api.themoviedb.org/3/search/movie?api_key=${key}&query=${q}`;
       const moviesData = await axios.get(url);
-      res.json(moviesData.data.results);
-      console.log(moviesData.data);
+      const refactoredData = moviesData.data.results.map((movie)=>{ return new Movies(movie.original_title, movie.poster_path)})
+      res.json(refactoredData);
+      console.log(refactoredData);
     } else {
       res.send("<h1>Error!</h1>");
     }
