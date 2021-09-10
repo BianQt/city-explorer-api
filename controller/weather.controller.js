@@ -2,6 +2,9 @@
 const axios = require("axios");
 require("dotenv").config({ path: __dirname + "/.env" });
 const Forcast = require("../models/forcast.model");
+const Cache = require("../helper/cache.helper");
+
+const cacheObject = new Cache();
 
 const weather = async (req, res) => {
   const lon = req.query.lon;
@@ -9,14 +12,20 @@ const weather = async (req, res) => {
   const q = req.query.q;
   const key = process.env.WEATHER_API_KEY;
 
-  if (lon && lat) {
-    const url = `https://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lon}&key=${key}`;
-    const weatherData = await axios.get(url);
-    res.json(weatherData.data);
+  const foundData = cacheObject.forcast.find(
+    (location) => location.lat == lat && location.lon == lon
+  );
+  const dayInMilSec = 86400000;
+  const timePassed = (Date.now()-cacheObject.timeStamp) > dayInMilSec;
+  if (timePassed){
+    cacheObject = new Cache();
   }
-  try {
-    if (q) {
-      const url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${q}&key=${key}`;
+  if (foundData) {
+    console.log(cacheObject.forcast);
+    res.json(foundData.data);
+  } else {
+    try {
+      const url = `https://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lon}&key=${key}`;
       const weatherData = await axios.get(url);
       const refactoredData = weatherData.data.data.map((day) => {
         return new Forcast(
@@ -27,12 +36,15 @@ const weather = async (req, res) => {
           day.weather.icon
         );
       });
+      cacheObject.forcast.push({
+        lat: lat,
+        lon: lon,
+        data: refactoredData,
+      });
       res.json(refactoredData);
-    } else {
-      res.send("<h1>Error!</h1>");
+    } catch (e) {
+      console.log("Something went wrong.");
     }
-  } catch (e) {
-    console.log("Something went wrong.");
   }
 };
 
