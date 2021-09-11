@@ -11,7 +11,7 @@ const getMovies = async (req, res) => {
   const key = process.env.MOVIES_API_KEY;
 
   const foundData = cacheObject.movies.find(
-    (movie) => movie.title.toLowerCase.includes(q)
+    (movie) => movie.keyWord.includes(q)
   );
   const dayInMilSec = 86400000;
   const timePassed = (Date.now()-cacheObject.timeStamp) > dayInMilSec;
@@ -31,6 +31,7 @@ const getMovies = async (req, res) => {
         cacheObject.movies.push({
           title: movie.original_title,
           imgUrl: movie.poster_path,
+          keyWord:q,
         });
 
         return new Movies(movie.original_title, movie.poster_path);

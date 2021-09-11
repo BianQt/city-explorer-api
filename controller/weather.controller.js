@@ -16,12 +16,11 @@ const weather = async (req, res) => {
     (location) => location.lat == lat && location.lon == lon
   );
   const dayInMilSec = 86400000;
-  const timePassed = (Date.now()-cacheObject.timeStamp) > dayInMilSec;
-  if (timePassed){
+  const timePassed = Date.now() - cacheObject.timeStamp > dayInMilSec;
+  if (timePassed) {
     cacheObject = new Cache();
   }
   if (foundData) {
-    console.log(cacheObject.forcast);
     res.json(foundData.data);
   } else {
     try {
